@@ -14,38 +14,34 @@ $(function() {
         search(keyword, bookCache);
     });
     $("#addBook").click(function() {
-        $(".content").load("./addform.html", function() {
-            $.getJSON("./publish.json", function(data) {
-                var publish = data.publish;
-                $("#publish").append('<option value=""></option>');
-                for (var i = 0; i < publish.length; i++) {
-                    $("#publish").append(['<option value="', publish[i], '">', publish[i], '</option>'].join(""));
-                }
-                checkFormBlur();
-            });
-            checkFormSubmit();
-        });
+        loadForm("add");
     });
     $("#home").click(function() {
         addBooksToContent(bookCache);
     });
     if (bookID != null) {
         getBookDetail(bookID);
+        setBookCache();
     } else {
+        setBookCache();
+        addBooksToContent(bookCache);
+        if (keyword != null) {
+            $("#keyword").attr("placeholder", keyword);
+            search(keyword, bookCache);
+        }
+    }
+
+    // 设置书籍列表缓存
+    function setBookCache() {
+        $.ajaxSettings.async = false; //设置ajax同步执行
         $.getJSON("./books.json", function(data) {
             var books = data.books;
             // 缓存书籍列表
             if (books.length) {
                 bookCache = books;
             }
-            addBooksToContent(books);
         });
-        if (keyword != null){
-            setTimeout(function() {
-                $("#keyword").attr("placeholder", keyword);
-                search(keyword, bookCache);
-            });
-        }
+        $.ajaxSettings.async = true;
     }
 
     // 向页面中加载书籍
@@ -246,10 +242,19 @@ $(function() {
     }
     // 编辑书籍
     function editBook(book) {
-        var bookID = book.find(".booksdetail").attr("bookID") - 1;
-        $(".content").load("./addform.html", function() {
-            $("#bookName").val(bookCache[bookID].name);
-            $("#author").val(bookCache[bookID].author);
+        var book = bookCache[book.find(".booksdetail").attr("bookID") - 1];
+        loadForm("edit", book);
+        $("#bookName").val(book.name);
+        $("#author").val(book.author);
+        $("#bookName").val(book.name);
+        $("#author").val(book.author);
+    }
+    //加载表单
+    function loadForm(sign, book) {
+        var sign = arguments[0];
+        var book = arguments[1];
+        $.ajaxSettings.async = false;
+        $(".content").load("./form.html", function() {
             $.getJSON("./publish.json", function(data) {
                 var publish = data.publish;
                 $("#publish").append('<option value=""></option>');
@@ -257,13 +262,14 @@ $(function() {
                     $("#publish").append(['<option value="', publish[i], '">', publish[i], '</option>'].join(""));
                 }
             });
-            checkFormSubmit();
+            checkFormSubmit(sign, book);
             checkFormBlur();
         });
+        $.ajaxSettings.async = true;
     }
     //表带验证
 
-    function checkFormSubmit() {
+    function checkFormSubmit(sign, book) {
         $("form").submit(function(e) {
             e.preventDefault(); //阻止默认事件
             var result = true; //验证结果
@@ -307,11 +313,15 @@ $(function() {
             } else {
                 $("#img-null").css("display", "none");
             }
-            var a = [result, bookName, author, publish, img];
-
-            var result = checkForm(e);
-            if (a[0])
-                addBook(a[1], a[2], a[3], a[4]);
+            result = [result, bookName, author, publish, img];
+            if (result[0] && sign === "add")
+                addBook(result[1], result[2], result[3], result[4]);
+            if (result[0] && sign === "edit") {
+                book.name = bookName;
+                book.author = author;
+                book.publish = publish;
+                addBooksToContent(bookCache);
+            }
         });
     }
 
