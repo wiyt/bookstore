@@ -45,9 +45,9 @@ $(function() {
                 });
             });
             $("form").submit(function(e) {
-                if (checkForm(e)) {
-                    addBook(bookName, author, publish, img)
-                }
+                var result = checkForm(e);
+                if(result[0])
+                    addBook(result[1], result[2], result[3], result[4]);
             });
         });
     });
@@ -327,6 +327,6 @@ $(function() {
         } else {
             $("#img-null").css("display", "none");
         }
-        return result;
+        return [result,bookName,author,publish,img];
     }
 });
