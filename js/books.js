@@ -12,7 +12,48 @@ $(function() {
     $("#keyword").bind("input", function() {
         var keyword = this.value;
         search(keyword, bookCache);
-    })
+    });
+    $("#addBook").click(function() {
+        $(".content").load("./addform.html", function() {
+            $.getJSON("./publish.json", function(data) {
+                var publish = data.publish;
+                $("#publish").append('<option value=""></option>');
+                for (var i = 0; i < publish.length; i++) {
+                    $("#publish").append(['<option value="', publish[i], '">', publish[i], '</option>'].join(""));
+                }
+                $("form input").blur(function() {
+                    var val = $(this).val();
+                    var alert = $(this).nextAll();
+                    if (/^\s*$/.test(val)) {
+                        $(alert[0]).css("display", "block");
+                    } else {
+                        $(alert[0]).css("display", "none");
+                    }
+                    if (val.length > 15) {
+                        $(alert[1]).css("display", "block");
+                    } else {
+                        $(alert[1]).css("display", "none");
+                    }
+                });
+                $("form select").blur(function() {
+                    if ($(this).val().length == 0) {
+                        $("#publish-null").css("display", "block");
+                    } else {
+                        $("#publish-null").css("display", "none");
+                    }
+
+                });
+            });
+            $("form").submit(function(e) {
+                if (checkForm(e)) {
+                    addBook(bookName, author, publish, img)
+                }
+            });
+        });
+    });
+    $("#home").click(function() {
+        addBooksToContent(bookCache);
+    });
     if (bookID != null) {
         getBookDetail(bookID);
     } else {
@@ -93,8 +134,12 @@ $(function() {
                     bookHtml = ["<tr>",
                         '<td>',
                         '<img src="', imgUrl, '">',
-                        '<button class="edit btn btn-default btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>',
-                        '<button class="delete btn btn-default btn-xs"><span class="glyphicon glyphicon-minus"></span></button>',
+                        '<button class="edit btn btn-default btn-xs">',
+                        '<span class="glyphicon glyphicon-pencil"></span>',
+                        '</button>',
+                        '<button class="delete btn btn-default btn-xs">',
+                        '<span class="glyphicon glyphicon-minus"></span>',
+                        '</button>',
                         '</td>',
                         "<td>",
                         '<a class="booksdetail" href="?id=', bookID, '" bookID="', bookID, '">', bName, '</a>',
@@ -111,8 +156,12 @@ $(function() {
                     bookHtml = ['<div class="book col-sm-6 col-md-3">',
                         '<div class="b-img">',
                         '<img src="', imgUrl, '" alt=""><br>',
-                        '<button class="edit btn btn-default btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>',
-                        '<button class="delete btn btn-default btn-xs"><span class="glyphicon glyphicon-minus"></span></button>',
+                        '<button class="edit btn btn-default btn-xs">',
+                        '<span class="glyphicon glyphicon-pencil"></span>',
+                        '</button>',
+                        '<button class="delete btn btn-default btn-xs">',
+                        '<span class="glyphicon glyphicon-minus"></span>',
+                        '</button>',
                         '</div>',
                         '<div class="b-name">',
                         '<a class="booksdetail" href="?id=', bookID, '" bookID="', bookID, '">', bName, '</a>',
@@ -178,22 +227,6 @@ $(function() {
         var booklist;
         var searchResultlist = [];
         var reg = RegExp(keyword, "m");
-        // $.getJSON("./books.json", function(data) {
-        //     booklist = data.books;
-        // for (var i = 0; i < booklist.length; i++) {
-        //     if (reg.test(booklist[i].name)) {
-        //         searchResultlist.push(booklist[i]);
-        //     }
-        //     if (reg.test(booklist[i].author)) {
-        //         searchResultlist.push(booklist[i]);
-        //     }
-        //     if (reg.test(booklist[i].category)) {
-        //         searchResultlist.push(booklist[i]);
-        //     }
-        //     if (reg.test(booklist[i].publish)) {
-        //         searchResultlist.push(booklist[i]);
-        //     }
-        // }
         for (var i = 0; i < bookCache.length; i++) {
             if (reg.test(bookCache[i].name)) {
                 searchResultlist.push(bookCache[i]);
@@ -217,6 +250,18 @@ $(function() {
         // });
     }
 
+    //添加书籍
+    function addBook(bName, author, publish, img) {
+        var book = {
+            bookID: bookCache.length + 1,
+            name: bName,
+            author: author,
+            "img-url": img,
+            intro: ""
+        };
+        bookCache.push(book);
+        addBooksToContent(bookCache);
+    }
     //删除书籍
     function deleteBook(book) {
         book.remove();
@@ -237,5 +282,51 @@ $(function() {
                 }
             });
         });
+    }
+    //表带验证
+    function checkForm(e) {
+        e.preventDefault(); //阻止默认事件
+        var result = true; //验证结果
+        var bookName = $("#bookName").val();
+        var author = $("#author").val();
+        var publish = $("#publish").val();
+        var img = $("img").val();
+        var patt = /^\s*$/;
+        if (patt.test(bookName)) {
+            $("#bkn-null").css("display", "block");
+            result = false;
+        } else {
+            $("#bkn-null").css("display", "none");
+        }
+        if (bookName.length > 15) {
+            $("#bkn-len").css("display", "block");
+            result = false;
+        } else {
+            $("#bkn-len").css("display", "none");
+        }
+        if (patt.test(author)) {
+            $("#auth-null").css("display", "block");
+            result = false;
+        } else {
+            $("#auth-null").css("display", "none");
+        }
+        if (author.length > 15) {
+            $("#auth-len").css("display", "block");
+            result = false;
+        } else {
+            $("#auth-len").css("display", "none");
+        }
+        if (patt.test(publish)) {
+            $("#publish-null").css("display", "block");
+            result = false;
+        } else {
+            $("#publish-null").css("display", "none");
+        }
+        if (patt.test(img)) {
+            $("#img-null").css("display", "block");
+        } else {
+            $("#img-null").css("display", "none");
+        }
+        return result;
     }
 });

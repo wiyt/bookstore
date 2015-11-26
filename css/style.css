@@ -57,3 +57,6 @@ img{
 .table img{
     width: 60px;
 }
+.alert-danger{
+    display: none;
+}
