@@ -227,8 +227,8 @@ $(function() {
     function editBook(book) {
         var bookID = book.find(".booksdetail").attr("bookID") - 1;
         $(".content").load("./editform.html", function() {
-            $("#bookName")[0].value = bookCache[bookID].name;
-            $("#author")[0].value = bookCache[bookID].author;
+            $("#bookName").val(bookCache[bookID].name);
+            $("#author").val(bookCache[bookID].author);
             $.getJSON("./publish.json", function(data) {
                 var publish = data.publish;
                 $("#publish").append('<option value=""></option>');
