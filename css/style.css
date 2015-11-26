@@ -1,0 +1,59 @@
+ul {
+    list-style: none;
+}
+
+.row {
+    margin-bottom: 35px;
+}
+
+.b-name {
+    margin: 20px 0;
+}
+.detail-box p{
+    height: 30px;
+    line-height: 30px;
+}
+.intro p{
+    text-indent: 2em;
+}
+img{
+    width: 130px;
+}
+.head>.nav{
+    position: relative;
+}
+.searchBox{
+    position: absolute;
+    top: 3px;
+    right: 0;
+}
+.searchBox form{
+    float: left;
+    margin-right: 5px;
+    margin-top: 4px;
+}
+#homepage{
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000px;
+}
+#list-style{
+    margin-left: 5px;
+    margin-bottom: 4px;
+}
+#style2 .img-box{
+    float: left;
+}
+#style2 .detail-box p{
+    height: 20px;
+    line-height: 20px;
+}
+#style2 .detail-box .content{
+    height: 40px;
+    overflow:hidden;
+    text-overflow: ellipsis;
+}
+.table img{
+    width: 60px;
+}
