@@ -36,13 +36,14 @@ $(function() {
         var bookRowID = 0;
         var styleId = 1;
         var html = ['<h3>重磅推荐',
-                        '<button id="list-style" class="btn btn-default btn-xs">',
-                            '<span class="glyphicon glyphicon-th-list"></span>',
-                        '</button>',
-                    '</h3>',
-                    '<div class="booksBox">',
-                        '<ul class="booklist"></ul>',
-                    '</div>'].join("");
+            '<button id="list-style" class="btn btn-default btn-xs">',
+            '<span class="glyphicon glyphicon-th-list"></span>',
+            '</button>',
+            '</h3>',
+            '<div class="booksBox">',
+            '<ul class="booklist"></ul>',
+            '</div>'
+        ].join("");
         $(".content").html(html);
         $("#list-style").click(function() {
             $(".booklist").empty();
@@ -51,16 +52,17 @@ $(function() {
             if (icon == "glyphicon glyphicon-th-list") {
                 button.children().attr("class", "glyphicon glyphicon-th");
                 var table = ['<table class="table">',
-                                "<tr>",
-                                    "<th></th>",
-                                    "<th>书名</th>",
-                                    "<th>作者</th>",
-                                    "<th>类别</th>",
-                                    "<th>出版社</th>",
-                                    "<th>出版时间</th>",
-                                    "<th>价钱</th>",
-                                "</tr>",
-                            "</table>"].join("");
+                    "<tr>",
+                    "<th></th>",
+                    "<th>书名</th>",
+                    "<th>作者</th>",
+                    "<th>类别</th>",
+                    "<th>出版社</th>",
+                    "<th>出版时间</th>",
+                    "<th>价钱</th>",
+                    "</tr>",
+                    "</table>"
+                ].join("");
                 $(".booksBox").html(table);
                 console.log($(".booksBox").html());
                 styleId = 2;
@@ -89,29 +91,37 @@ $(function() {
                 var bookHtml = '';
                 if (styleId == 2) {
                     bookHtml = ["<tr>",
-                                    '<td><img src="',imgUrl,'"></img></td>',
-                                    "<td>",
-                                        '<a class="booksdetail" href="?id=',bookID,'" bookID="',bookID,'">',bName,'</a>',
-                                    "</td>",
-                                    "<td>",author,"</td>",
-                                    "<td>",category,"</td>",
-                                    "<td>",publish,"</td>",
-                                    "<td>",pubTime,"</td>",
-                                    "<td>",bPrice,"</td>",
-                                "</tr>"].join("");
+                        '<td>',
+                        '<img src="', imgUrl, '">',
+                        '<button class="edit btn btn-default btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>',
+                        '<button class="delete btn btn-default btn-xs"><span class="glyphicon glyphicon-minus"></span></button>',
+                        '</td>',
+                        "<td>",
+                        '<a class="booksdetail" href="?id=', bookID, '" bookID="', bookID, '">', bName, '</a>',
+                        "</td>",
+                        "<td>", author, "</td>",
+                        "<td>", category, "</td>",
+                        "<td>", publish, "</td>",
+                        "<td>", pubTime, "</td>",
+                        "<td>", bPrice, "</td>",
+                        "</tr>"
+                    ].join("");
                     $(".table").append(bookHtml);
                 } else if (styleId == 1) {
                     bookHtml = ['<div class="book col-sm-6 col-md-3">',
-                                    '<div class="b-img">',
-                                        '<img src="',imgUrl,'" alt="">',
-                                    '</div>',
-                                    '<div class="b-name">',
-                                        '<a class="booksdetail" href="?id=',bookID,'" bookID="',bookID,'">',bName,'</a>',
-                                    '</div>',
-                                   '<div class="b-price">',
-                                        '<span class="price">¥',bPrice,'</span>',
-                                    '</div>',
-                                '</div>'].join("");
+                        '<div class="b-img">',
+                        '<img src="', imgUrl, '" alt=""><br>',
+                        '<button class="edit btn btn-default btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>',
+                        '<button class="delete btn btn-default btn-xs"><span class="glyphicon glyphicon-minus"></span></button>',
+                        '</div>',
+                        '<div class="b-name">',
+                        '<a class="booksdetail" href="?id=', bookID, '" bookID="', bookID, '">', bName, '</a>',
+                        '</div>',
+                        '<div class="b-price">',
+                        '<span class="price">¥', bPrice, '</span>',
+                        '</div>',
+                        '</div>'
+                    ].join("");
                     if ((i + 4) % 4 == 0) {
                         bookRowID++;
                         var bookRow = '<li class="row ' + bookRowID + '"></li>'
@@ -120,6 +130,12 @@ $(function() {
                     $(".booklist li.row." + bookRowID + "").append(bookHtml);
                 }
             }
+            $(".delete").click(function() {
+                deleteBook($(this).parent().parent());
+            });
+            $(".edit").click(function() {
+                editBook($(this).parent().parent());
+            })
         }
     }
 
@@ -137,8 +153,7 @@ $(function() {
             }
 
             if (book) {
-                $(".content").load("./bookdetail.html");
-                setTimeout(function() {
+                $(".content").load("./bookdetail.html", function() {
                     $(".img").attr("src", book["img-url"]);
                     $(".bookName").text(book.name);
                     $(".lang").text(book.lang);
@@ -150,8 +165,7 @@ $(function() {
                     $(".intro .content").text(book.intro.content);
                     $(".intro .authorintro").text(book.intro.authorintro);
                     $(".intro .catalog").text(book.intro.catalog);
-                },200);
-
+                });
             } else {
                 window.location = "./"
             }
@@ -201,5 +215,27 @@ $(function() {
         addBooksToContent(searchResultlist);
         $(".content h3").text("搜索结果");
         // });
+    }
+
+    //删除书籍
+    function deleteBook(book) {
+        book.remove();
+        var bookID = book.find(".booksdetail").attr("bookID");
+        bookCache.splice(bookID - 1, 1);
+    }
+    // 编辑书籍
+    function editBook(book) {
+        var bookID = book.find(".booksdetail").attr("bookID") - 1;
+        $(".content").load("./editform.html", function() {
+            $("#bookName")[0].value = bookCache[bookID].name;
+            $("#author")[0].value = bookCache[bookID].author;
+            $.getJSON("./publish.json", function(data) {
+                var publish = data.publish;
+                $("#publish").append('<option value=""></option>');
+                for (var i = 0; i < publish.length; i++) {
+                    $("#publish").append(['<option value="', publish[i], '">', publish[i], '</option>'].join(""));
+                }
+            });
+        });
     }
 });
