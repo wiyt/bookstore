@@ -20,8 +20,8 @@ $(function() {
         addBooksToContent(bookCache);
     });
     if (bookID != null) {
-        getBookDetail(bookID);
         setBookCache();
+        getBookDetail(bookID);
     } else {
         setBookCache();
         addBooksToContent(bookCache);
@@ -151,6 +151,7 @@ $(function() {
                     $(".booklist li.row." + bookRowID + "").append(bookHtml);
                 }
             }
+            // 加载全部书籍之后绑定两个按钮的click事件
             $(".delete").click(function() {
                 deleteBook($(this).parent().parent());
             });
@@ -163,34 +164,28 @@ $(function() {
     // 加载书本详细信息
     function getBookDetail(bookID) {
         var book;
-        $.getJSON("books.json", function(data) {
-            var books = data.books;
-
-            for (var i = 0; i < books.length; i++) {
-                if (bookID == books[i].bookID) {
-
-                    book = books[i];
-                }
+        for (var i = 0; i < bookCache.length; i++) {
+            if (bookID == bookCache[i].bookID) {
+                book = bookCache[i];
             }
-
-            if (book) {
-                $(".content").load("./bookdetail.html", function() {
-                    $(".img").attr("src", book["img-url"]);
-                    $(".bookName").text(book.name);
-                    $(".lang").text(book.lang);
-                    $(".publish").text(book.publish);
-                    $(".pubTime").text(book.pubTime);
-                    $(".category").text(book.category);
-                    $(".price").text(book.price);
-                    $(".intro .abtract").text(book.intro.abtract);
-                    $(".intro .content").text(book.intro.content);
-                    $(".intro .authorintro").text(book.intro.authorintro);
-                    $(".intro .catalog").text(book.intro.catalog);
-                });
-            } else {
-                window.location = "./"
-            }
-        });
+        }
+        if (book) {
+            $(".content").load("./bookdetail.html", function() {
+                $(".img").attr("src", book["img-url"]);
+                $(".bookName").text(book.name);
+                $(".lang").text(book.lang);
+                $(".publish").text(book.publish);
+                $(".pubTime").text(book.pubTime);
+                $(".category").text(book.category);
+                $(".price").text(book.price);
+                $(".intro .abtract").text(book.intro.abtract);
+                $(".intro .content").text(book.intro.content);
+                $(".intro .authorintro").text(book.intro.authorintro);
+                $(".intro .catalog").text(book.intro.catalog);
+            });
+        } else {
+            window.location = "./"
+        }
 
     }
 
