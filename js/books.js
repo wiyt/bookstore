@@ -21,34 +21,9 @@ $(function() {
                 for (var i = 0; i < publish.length; i++) {
                     $("#publish").append(['<option value="', publish[i], '">', publish[i], '</option>'].join(""));
                 }
-                $("form input").blur(function() {
-                    var val = $(this).val();
-                    var alert = $(this).nextAll();
-                    if (/^\s*$/.test(val)) {
-                        $(alert[0]).css("display", "block");
-                    } else {
-                        $(alert[0]).css("display", "none");
-                    }
-                    if (val.length > 15) {
-                        $(alert[1]).css("display", "block");
-                    } else {
-                        $(alert[1]).css("display", "none");
-                    }
-                });
-                $("form select").blur(function() {
-                    if ($(this).val().length == 0) {
-                        $("#publish-null").css("display", "block");
-                    } else {
-                        $("#publish-null").css("display", "none");
-                    }
-
-                });
+                checkFormBlur();
             });
-            $("form").submit(function(e) {
-                var result = checkForm(e);
-                if(result[0])
-                    addBook(result[1], result[2], result[3], result[4]);
-            });
+            checkFormSubmit();
         });
     });
     $("#home").click(function() {
@@ -65,11 +40,12 @@ $(function() {
             }
             addBooksToContent(books);
         });
-        if (keyword != null)
+        if (keyword != null){
             setTimeout(function() {
                 $("#keyword").attr("placeholder", keyword);
                 search(keyword, bookCache);
             });
+        }
     }
 
     // 向页面中加载书籍
@@ -271,7 +247,7 @@ $(function() {
     // 编辑书籍
     function editBook(book) {
         var bookID = book.find(".booksdetail").attr("bookID") - 1;
-        $(".content").load("./editform.html", function() {
+        $(".content").load("./addform.html", function() {
             $("#bookName").val(bookCache[bookID].name);
             $("#author").val(bookCache[bookID].author);
             $.getJSON("./publish.json", function(data) {
@@ -281,52 +257,85 @@ $(function() {
                     $("#publish").append(['<option value="', publish[i], '">', publish[i], '</option>'].join(""));
                 }
             });
+            checkFormSubmit();
+            checkFormBlur();
         });
     }
     //表带验证
-    function checkForm(e) {
-        e.preventDefault(); //阻止默认事件
-        var result = true; //验证结果
-        var bookName = $("#bookName").val();
-        var author = $("#author").val();
-        var publish = $("#publish").val();
-        var img = $("img").val();
-        var patt = /^\s*$/;
-        if (patt.test(bookName)) {
-            $("#bkn-null").css("display", "block");
-            result = false;
-        } else {
-            $("#bkn-null").css("display", "none");
-        }
-        if (bookName.length > 15) {
-            $("#bkn-len").css("display", "block");
-            result = false;
-        } else {
-            $("#bkn-len").css("display", "none");
-        }
-        if (patt.test(author)) {
-            $("#auth-null").css("display", "block");
-            result = false;
-        } else {
-            $("#auth-null").css("display", "none");
-        }
-        if (author.length > 15) {
-            $("#auth-len").css("display", "block");
-            result = false;
-        } else {
-            $("#auth-len").css("display", "none");
-        }
-        if (patt.test(publish)) {
-            $("#publish-null").css("display", "block");
-            result = false;
-        } else {
-            $("#publish-null").css("display", "none");
-        }
-        if (patt.test(img)) {
-            $("#img-null").css("display", "block");
-        } else {
-            $("#img-null").css("display", "none");
-        }
-        return [result,bookName,author,publish,img];
+
+    function checkFormSubmit() {
+        $("form").submit(function(e) {
+            e.preventDefault(); //阻止默认事件
+            var result = true; //验证结果
+            var bookName = $("#bookName").val();
+            var author = $("#author").val();
+            var publish = $("#publish").val();
+            var img = $("img").val();
+            var patt = /^\s*$/;
+            if (patt.test(bookName)) {
+                $("#bkn-null").css("display", "block");
+                result = false;
+            } else {
+                $("#bkn-null").css("display", "none");
+            }
+            if (bookName.length > 15) {
+                $("#bkn-len").css("display", "block");
+                result = false;
+            } else {
+                $("#bkn-len").css("display", "none");
+            }
+            if (patt.test(author)) {
+                $("#auth-null").css("display", "block");
+                result = false;
+            } else {
+                $("#auth-null").css("display", "none");
+            }
+            if (author.length > 15) {
+                $("#auth-len").css("display", "block");
+                result = false;
+            } else {
+                $("#auth-len").css("display", "none");
+            }
+            if (patt.test(publish)) {
+                $("#publish-null").css("display", "block");
+                result = false;
+            } else {
+                $("#publish-null").css("display", "none");
+            }
+            if (patt.test(img)) {
+                $("#img-null").css("display", "block");
+            } else {
+                $("#img-null").css("display", "none");
+            }
+            var a = [result, bookName, author, publish, img];
+
+            var result = checkForm(e);
+            if (a[0])
+                addBook(a[1], a[2], a[3], a[4]);
+        });
+    }
+
+    function checkFormBlur() {
+        $("form input").blur(function() {
+            var val = $(this).val();
+            var alert = $(this).nextAll();
+            if (/^\s*$/.test(val)) {
+                $(alert[0]).css("display", "block");
+            } else {
+                $(alert[0]).css("display", "none");
+            }
+            if (val.length > 15) {
+                $(alert[1]).css("display", "block");
+            } else {
+                $(alert[1]).css("display", "none");
+            }
+        });
+        $("form select").blur(function() {
+            if ($(this).val().length == 0) {
+                $("#publish-null").css("display", "block");
+            } else {
+                $("#publish-null").css("display", "none");
+            }
+        });
     }
 });
