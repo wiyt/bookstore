@@ -7,11 +7,11 @@ $(function() {
     var bookCache = []; //当前页面书籍缓存变量
     $("#searchBtn").click(function() {
         var keyword = document.getElementById("keyword").value;
-        search(keyword, bookCache);
+        search(keyword);
     });
     $("#keyword").bind("input", function() {
         var keyword = this.value;
-        search(keyword, bookCache);
+        search(keyword);
     });
     $("#addBook").click(function() {
         loadForm("add");
@@ -27,7 +27,7 @@ $(function() {
         addBooksToContent(bookCache);
         if (keyword != null) {
             $("#keyword").attr("placeholder", keyword);
-            search(keyword, bookCache);
+            search(keyword);
         }
     }
 
@@ -190,8 +190,8 @@ $(function() {
     }
 
     // 搜索功能
-    function search(keyword, bookCache) {
-        var booklist;
+    function search(keyword) {
+        // setBookCache();
         var searchResultlist = [];
         var reg = RegExp(keyword, "m");
         for (var i = 0; i < bookCache.length; i++) {
@@ -214,7 +214,6 @@ $(function() {
         }
         addBooksToContent(searchResultlist);
         $(".content h3").text("搜索结果");
-        // });
     }
 
     //添加书籍
@@ -233,7 +232,11 @@ $(function() {
     function deleteBook(book) {
         book.remove();
         var bookID = book.find(".booksdetail").attr("bookID");
-        bookCache.splice(bookID - 1, 1);
+        for (var i = 0; i < bookCache.length; i++) {
+            if (bookID == bookCache[i].bookID) {
+                bookCache.splice(i, 1);
+            }
+        }
     }
     // 编辑书籍
     function editBook(book) {
