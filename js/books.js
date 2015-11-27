@@ -262,6 +262,10 @@ $(function() {
             });
             checkFormSubmit(sign, book);
             checkFormBlur();
+            $("#cancel").click(function(e){
+                e.preventDefault();
+                addBooksToContent(bookCache);
+            })
         });
         $.ajaxSettings.async = true;
     }
