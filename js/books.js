@@ -1,3 +1,4 @@
+"use strict";
 $(function() {
     var url = decodeURI(location.search);
     var patt = /\?id=(\d+)$/; //详情书籍id，搜索模式
@@ -19,13 +20,13 @@ $(function() {
     $("#home").click(function() {
         addBooksToContent(bookCache);
     });
-    if (bookID != null) {
+    if (bookID !== null) {
         setBookCache();
         getBookDetail(bookID);
     } else {
         setBookCache();
         addBooksToContent(bookCache);
-        if (keyword != null) {
+        if (keyword !== null) {
             $("#keyword").attr("placeholder", keyword);
             search(keyword);
         }
@@ -46,16 +47,15 @@ $(function() {
 
     // 向页面中加载书籍
     function addBooksToContent(books) {
-        var bookRowID = 0;
         var styleId = 1;
-        var html = ['<h3>重磅推荐',
-            '<button id="list-style" class="btn btn-default btn-xs">',
-            '<span class="glyphicon glyphicon-th-list"></span>',
-            '</button>',
-            '</h3>',
-            '<div class="booksBox">',
-            '<ul class="booklist"></ul>',
-            '</div>'
+        var html = ["<h3>重磅推荐",
+            "<button id=\"list-style\" class=\"btn btn-default btn-xs\">",
+            "<span class=\"glyphicon glyphicon-th-list\"></span>",
+            "</button>",
+            "</h3>",
+            "<div class=\"booksBox\">",
+            "<ul class=\"booklist\"></ul>",
+            "</div>"
         ].join("");
         $(".content").html(html);
         $("#list-style").click(function() {
@@ -64,7 +64,7 @@ $(function() {
             var icon = button.children().attr("class");
             if (icon == "glyphicon glyphicon-th-list") {
                 button.children().attr("class", "glyphicon glyphicon-th");
-                var table = ['<table class="table">',
+                var table = ["<table class=\"table\">",
                     "<tr>",
                     "<th></th>",
                     "<th>书名</th>",
@@ -82,7 +82,7 @@ $(function() {
                 addBooks();
             } else {
                 button.children().attr("class", "glyphicon glyphicon-th-list");
-                var booklist = '<ul class="booklist"></ul>';
+                var booklist = "<ul class=\"booklist\"></ul>";
                 $(".booksBox").html(booklist);
                 styleId = 1;
                 addBooks();
@@ -91,6 +91,7 @@ $(function() {
         addBooks();
 
         function addBooks() {
+            var bookRowID = 0;
             for (var i = 0; i < books.length; i++) {
                 var bookID = books[i].bookID;
                 var imgUrl = books[i]["img-url"];
@@ -101,20 +102,20 @@ $(function() {
                 var pubTime = books[i].pubTime;
                 var bPrice = books[i].price;
                 var category = books[i].category;
-                var bookHtml = '';
+                var bookHtml = "";
                 if (styleId == 2) {
                     bookHtml = ["<tr>",
-                        '<td>',
-                        '<img src="', imgUrl, '">',
-                        '<button class="edit btn btn-default btn-xs">',
-                        '<span class="glyphicon glyphicon-pencil"></span>',
-                        '</button>',
-                        '<button class="delete btn btn-default btn-xs">',
-                        '<span class="glyphicon glyphicon-minus"></span>',
-                        '</button>',
-                        '</td>',
                         "<td>",
-                        '<a class="booksdetail" href="?id=', bookID, '" bookID="', bookID, '">', bName, '</a>',
+                        "<img src=\"", imgUrl, "\">",
+                        "<button class=\"edit btn btn-default btn-xs\">",
+                        "<span class=\"glyphicon glyphicon-pencil\"></span>",
+                        "</button>",
+                        "<button class=\"delete btn btn-default btn-xs\">",
+                        "<span class=\"glyphicon glyphicon-minus\"></span>",
+                        "</button>",
+                        "</td>",
+                        "<td>",
+                        "<a class=\"booksdetail\" href=\"?id=", bookID, "\" bookID=\"", bookID, "\">", bName, "</a>",
                         "</td>",
                         "<td>", author, "</td>",
                         "<td>", category, "</td>",
@@ -125,30 +126,30 @@ $(function() {
                     ].join("");
                     $(".table").append(bookHtml);
                 } else if (styleId == 1) {
-                    bookHtml = ['<div class="book col-sm-6 col-md-3">',
-                        '<div class="b-img">',
-                        '<img src="', imgUrl, '" alt=""><br>',
-                        '<button class="edit btn btn-default btn-xs">',
-                        '<span class="glyphicon glyphicon-pencil"></span>',
-                        '</button>',
-                        '<button class="delete btn btn-default btn-xs">',
-                        '<span class="glyphicon glyphicon-minus"></span>',
-                        '</button>',
-                        '</div>',
-                        '<div class="b-name">',
-                        '<a class="booksdetail" href="?id=', bookID, '" bookID="', bookID, '">', bName, '</a>',
-                        '</div>',
-                        '<div class="b-price">',
-                        '<span class="price">¥', bPrice, '</span>',
-                        '</div>',
-                        '</div>'
+                    bookHtml = ["<div class=\"book col-sm-6 col-md-3\">",
+                        "<div class=\"b-img\">",
+                        "<img src=\"", imgUrl, "\" alt=\"\"><br>",
+                        "<button class=\"edit btn btn-default btn-xs\">",
+                        "<span class=\"glyphicon glyphicon-pencil\"></span>",
+                        "</button>",
+                        "<button class=\"delete btn btn-default btn-xs\">",
+                        "<span class=\"glyphicon glyphicon-minus\"></span>",
+                        "</button>",
+                        "</div>",
+                        "<div class=\"b-name\">",
+                        "<a class=\"booksdetail\" href=\"?id=", bookID, "\" bookID=\"", bookID, "\">", bName, "</a>",
+                        "</div>",
+                        "<div class=\"b-price\">",
+                        "<span class=\"price\">¥", bPrice, "</span>",
+                        "</div>",
+                        "</div>"
                     ].join("");
-                    if ((i + 4) % 4 == 0) {
+                    if ((i + 4) % 4 === 0) {
                         bookRowID++;
-                        var bookRow = '<li class="row ' + bookRowID + '"></li>'
+                        var bookRow = "<li class=\"row r" + bookRowID + "\"></li>";
                         $(".booklist").append(bookRow);
                     }
-                    $(".booklist li.row." + bookRowID + "").append(bookHtml);
+                    $(".booklist li.r" + bookRowID + "").append(bookHtml);
                 }
             }
             // 加载全部书籍之后绑定两个按钮的click事件
@@ -184,7 +185,7 @@ $(function() {
                 $(".intro .catalog").text(book.intro.catalog);
             });
         } else {
-            window.location = "./"
+            window.location = "./";
         }
 
     }
@@ -193,7 +194,7 @@ $(function() {
     function search(keyword) {
         // setBookCache();
         var searchResultlist = [];
-        var reg = RegExp(keyword, "m");
+        var reg = new RegExp(keyword, "m");
         for (var i = 0; i < bookCache.length; i++) {
             if (reg.test(bookCache[i].name)) {
                 searchResultlist.push(bookCache[i]);
@@ -249,8 +250,8 @@ $(function() {
     }
     //加载表单
     function loadForm(sign, book) {
-        var sign = arguments[0];
-        var book = arguments[1];
+        // var sign = arguments[0];
+        // var book = arguments[1];
         $.ajaxSettings.async = false;
         $(".content").load("./form.html", function() {
             $.getJSON("./publish.json", function(data) {
@@ -262,10 +263,10 @@ $(function() {
             });
             checkFormSubmit(sign, book);
             checkFormBlur();
-            $("#cancel").click(function(e){
+            $("#cancel").click(function(e) {
                 e.preventDefault();
                 addBooksToContent(bookCache);
-            })
+            });
         });
         $.ajaxSettings.async = true;
     }
@@ -339,11 +340,11 @@ $(function() {
             if (val.length > 15) {
                 $(alert[1]).css("display", "block");
             } else {
-                $(alert[1]).css("display", "none");
+                $(alert[1]).css("display", "none"); 
             }
         });
         $("form select").blur(function() {
-            if ($(this).val().length == 0) {
+            if ($(this).val().length === 0) {
                 $("#publish-null").css("display", "block");
             } else {
                 $("#publish-null").css("display", "none");
